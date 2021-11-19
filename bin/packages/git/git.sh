@@ -185,6 +185,45 @@ function git::latest_tag() {
 }
 
 #######################################
+# Get the current branch for the dev.env project.
+#
+# Arguments:
+#   --dir
+#
+# Outputs:
+#   git branch --show-current
+#######################################
+function git::show_active_branch() {
+  local arguments_list=("dir")
+  local dir git_sub_command
+
+  while [ $# -gt 0 ]; do
+    if [[ $1 == *"--"* && $1 == *"="* ]]; then
+      local argument="${1/--/}"
+      IFS='=' read -ra parameter <<< "${argument}"
+
+      if [[ "${arguments_list[*]}" =~ ${parameter[0]} ]]; then
+        declare "${parameter[0]}"="${parameter[1]}"
+      fi
+    fi
+
+    shift
+  done
+  
+  if directory_exists "${dir}/.git"; then
+    git_sub_command="$(cd "${dir}" && git branch --show-current)"
+
+    if [[ -n "$git_sub_command" ]]; then
+      echo -e "$git_sub_command"
+    else
+      echo "$(git::latest_tag --dir="${dir}")"
+    fi
+  else
+    echo "unreleased"
+  fi
+}
+
+#######################################
 # Get the Git protocol.
 #
 # Global:

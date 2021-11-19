@@ -45,7 +45,7 @@ function command::help() {
   done
 
   output "$(ansi --bold --white DEV.env)" \
-    "$(git::latest_tag --dir="${project_dir}")"
+    "$(git::show_active_branch --dir="${project_dir}")"
 
   output "$(ansi --italic "${tagline}")"
 
